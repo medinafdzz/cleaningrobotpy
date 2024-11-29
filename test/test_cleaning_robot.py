@@ -73,6 +73,13 @@ class TestCleaningRobot(TestCase):
         mock_activate_rotation_motor.assert_called_once_with('l')
         self.assertEqual(result, '(0,0,W)')
 
+    @patch.object(GPIO, 'input')
+    def test_obstacle_found_detects_obstacle(self, mock_gpio_input):
+        robot = CleaningRobot()
+        mock_gpio_input.return_value = True  # Obstacle detected
+        self.assertTrue(robot.obstacle_found())
+
+
 
 
 
