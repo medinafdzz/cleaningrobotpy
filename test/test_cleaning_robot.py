@@ -15,4 +15,11 @@ class TestCleaningRobot(TestCase):
         self.assertEqual(robot.pos_y, 0)
         self.assertEqual(robot.heading, 'N')
 
+    def test_robot_status(self):
+        robot = CleaningRobot()
+        robot.pos_x = 0
+        robot.pos_y = 0
+        robot.heading = 'N'
+        self.assertEqual(robot.robot_status(), '(0,0,N)')
+
 
