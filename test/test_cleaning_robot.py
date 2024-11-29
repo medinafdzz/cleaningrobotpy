@@ -122,6 +122,24 @@ class TestCleaningRobot(TestCase):
         mock_activate_rotation_motor.assert_called_once_with('l')
         self.assertEqual(result, '(0,0,W)')  # Robot should turn left
 
+    @patch.object(IBS, 'get_charge_left')
+    @patch.object(CleaningRobot, 'activate_wheel_motor')
+    @patch.object(CleaningRobot, 'activate_rotation_motor')
+    def test_execute_command_with_low_battery(self, mock_activate_rotation_motor, mock_activate_wheel_motor,
+                                              mock_get_charge_left):
+        robot = CleaningRobot()
+        robot.initialize_robot()
+
+        mock_get_charge_left.return_value = 10
+
+        result = robot.execute_command('f')
+
+        mock_activate_wheel_motor.assert_not_called()
+        mock_activate_rotation_motor.assert_not_called()
+
+        self.assertEqual(result, '!(1,1,N)')
+
+
 
 
 
