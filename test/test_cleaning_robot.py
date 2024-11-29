@@ -85,5 +85,18 @@ class TestCleaningRobot(TestCase):
         mock_gpio_input.return_value = False
         self.assertFalse(robot.obstacle_found())
 
+    @patch.object(GPIO, 'input')
+    @patch.object(CleaningRobot, 'activate_wheel_motor')
+    def test_execute_command_forward_with_obstacle(self, mock_activate_wheel_motor, mock_gpio_input):
+        robot = CleaningRobot()
+        robot.initialize_robot()
+        mock_gpio_input.return_value = True   # Obstacle detected
+
+        result = robot.execute_command('f')
+
+        mock_activate_wheel_motor.assert_not_called()  # Wheel motor should not be activated
+        self.assertEqual(result, '(0,0,N)(0,1)')
+
+
 
 
