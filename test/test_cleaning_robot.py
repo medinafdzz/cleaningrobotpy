@@ -79,7 +79,11 @@ class TestCleaningRobot(TestCase):
         mock_gpio_input.return_value = True  # Obstacle detected
         self.assertTrue(robot.obstacle_found())
 
-
+    @patch.object(GPIO, 'input')
+    def test_obstacle_found_no_obstacle(self, mock_gpio_input):
+        robot = CleaningRobot()
+        mock_gpio_input.return_value = False
+        self.assertFalse(robot.obstacle_found())
 
 
 
