@@ -64,7 +64,14 @@ class TestCleaningRobot(TestCase):
         mock_activate_rotation_motor.assert_called_once_with('r')
         self.assertEqual(result, '(0,0,E)')
 
+    @patch.object(CleaningRobot, 'activate_rotation_motor')
+    def test_execute_command_turn_left(self, mock_activate_rotation_motor):
+        robot = CleaningRobot()
+        robot.initialize_robot()
+        result = robot.execute_command('l')
 
+        mock_activate_rotation_motor.assert_called_once_with('l')
+        self.assertEqual(result, '(0,0,W)')
 
 
 
