@@ -109,6 +109,21 @@ class TestCleaningRobot(TestCase):
         mock_activate_wheel_motor.assert_called_once()  # Wheel motor should be activated
         self.assertEqual(result, '(0,1,N)')
 
+    #I know the next test is unnecessary, but I wanted to show how to test if it turns when there is an obstacle
+    @patch.object(GPIO, 'input')
+    @patch.object(CleaningRobot, 'activate_rotation_motor')
+    def test_execute_command_turn_left_with_obstacle(self, mock_activate_rotation_motor, mock_gpio_input):
+        robot = CleaningRobot()
+        robot.initialize_robot()
+        mock_gpio_input.return_value = True
+
+        result = robot.execute_command('l')
+
+        mock_activate_rotation_motor.assert_called_once_with('l')
+        self.assertEqual(result, '(0,0,W)')  # Robot should turn left
+
+
+
 
 
 
