@@ -97,6 +97,19 @@ class TestCleaningRobot(TestCase):
         mock_activate_wheel_motor.assert_not_called()  # Wheel motor should not be activated
         self.assertEqual(result, '(0,0,N)(0,1)')
 
+    @patch.object(GPIO, 'input')
+    @patch.object(CleaningRobot, 'activate_wheel_motor')
+    def test_execute_command_forward_no_obstacle(self, mock_activate_wheel_motor, mock_gpio_input):
+        robot = CleaningRobot()
+        robot.initialize_robot()
+        mock_gpio_input.return_value = False  # No obstacle detected
+
+        result = robot.execute_command('f')
+
+        mock_activate_wheel_motor.assert_called_once()  # Wheel motor should be activated
+        self.assertEqual(result, '(0,1,N)')
+
+
 
 
 
