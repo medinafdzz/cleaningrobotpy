@@ -45,3 +45,18 @@ class TestCleaningRobot(TestCase):
         self.assertFalse(robot.cleaning_system_on)
         self.assertTrue(robot.recharge_led_on)
         mock_gpio_output.assert_has_calls([call(robot.CLEANING_SYSTEM_PIN, False), call(robot.RECHARGE_LED_PIN, True)], any_order=True)
+
+    @patch.object(CleaningRobot, 'activate_wheel_motor')
+    def test_execute_command_forward(self, mock_activate_wheel_motor):
+        robot = CleaningRobot()
+        robot.initialize_robot()
+        result = robot.execute_command('f')
+
+        mock_activate_wheel_motor.assert_called_once()
+        self.assertEqual(result, '(0,1,N)')
+
+
+
+
+
+
