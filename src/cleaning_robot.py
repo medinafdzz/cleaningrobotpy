@@ -73,6 +73,10 @@ class CleaningRobot:
         return f'({self.pos_x},{self.pos_y},{self.heading})'
 
     def execute_command(self, command: str) -> str:
+        charge_left = self.ibs.get_charge_left()
+        if charge_left <= 10:
+            return '!(1,1,N)'
+
         if command == self.FORWARD:
             if not self.obstacle_found():
                 self.activate_wheel_motor()
