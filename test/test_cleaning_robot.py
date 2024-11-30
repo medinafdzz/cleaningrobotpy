@@ -46,28 +46,42 @@ class TestCleaningRobot(TestCase):
         self.assertTrue(robot.recharge_led_on)
         mock_gpio_output.assert_has_calls([call(robot.CLEANING_SYSTEM_PIN, False), call(robot.RECHARGE_LED_PIN, True)], any_order=True)
 
+
+    @patch.object(IBS, 'get_charge_left')
     @patch.object(CleaningRobot, 'activate_wheel_motor')
-    def test_execute_command_forward(self, mock_activate_wheel_motor):
+    def test_execute_command_forward(self, mock_activate_wheel_motor, mock_get_charge_left):
         robot = CleaningRobot()
         robot.initialize_robot()
+
+        mock_get_charge_left.return_value = 100
+
         result = robot.execute_command('f')
 
         mock_activate_wheel_motor.assert_called_once()
+
         self.assertEqual(result, '(0,1,N)')
 
     @patch.object(CleaningRobot, 'activate_rotation_motor')
-    def test_execute_command_turn_right(self, mock_activate_rotation_motor):
+    @patch.object(IBS, 'get_charge_left')
+    def test_execute_command_turn_right(self, mock_get_charge_left, mock_activate_rotation_motor):
         robot = CleaningRobot()
         robot.initialize_robot()
+
+        mock_get_charge_left.return_value = 100
+
         result = robot.execute_command('r')
 
         mock_activate_rotation_motor.assert_called_once_with('r')
         self.assertEqual(result, '(0,0,E)')
 
     @patch.object(CleaningRobot, 'activate_rotation_motor')
-    def test_execute_command_turn_left(self, mock_activate_rotation_motor):
+    @patch.object(IBS, 'get_charge_left')
+    def test_execute_command_turn_left(self, mock_get_charge_left , mock_activate_rotation_motor):
         robot = CleaningRobot()
         robot.initialize_robot()
+
+        mock_get_charge_left.return_value = 100
+
         result = robot.execute_command('l')
 
         mock_activate_rotation_motor.assert_called_once_with('l')
@@ -85,75 +99,85 @@ class TestCleaningRobot(TestCase):
         mock_gpio_input.return_value = False
         self.assertFalse(robot.obstacle_found())
 
+
     @patch.object(GPIO, 'input')
     @patch.object(CleaningRobot, 'activate_wheel_motor')
-    def test_execute_command_forward_with_obstacle(self, mock_activate_wheel_motor, mock_gpio_input):
+    @patch.object(IBS, 'get_charge_left')
+    def test_execute_command_forward_with_obstacle(self, mock_get_charge_left, mock_activate_wheel_motor, mock_gpio_input):
         robot = CleaningRobot()
         robot.initialize_robot()
-        mock_gpio_input.return_value = True   # Obstacle detected
+
+        mock_get_charge_left.return_value = 100
+        mock_gpio_input.return_value = True
 
         result = robot.execute_command('f')
 
-        mock_activate_wheel_motor.assert_not_called()  # Wheel motor should not be activated
+        mock_activate_wheel_motor.assert_not_called()
         self.assertEqual(result, '(0,0,N)(0,1)')
 
+    @patch.object(IBS, 'get_charge_left')
     @patch.object(GPIO, 'input')
     @patch.object(CleaningRobot, 'activate_wheel_motor')
-    def test_execute_command_forward_no_obstacle(self, mock_activate_wheel_motor, mock_gpio_input):
+    def test_execute_command_forward_no_obstacle(self, mock_activate_wheel_motor, mock_gpio_input, mock_get_charge_left):
         robot = CleaningRobot()
         robot.initialize_robot()
-        mock_gpio_input.return_value = False  # No obstacle detected
+
+        mock_get_charge_left.return_value = 100
+        mock_gpio_input.return_value = False
 
         result = robot.execute_command('f')
 
-        mock_activate_wheel_motor.assert_called_once()  # Wheel motor should be activated
+        mock_activate_wheel_motor.assert_called_once()
         self.assertEqual(result, '(0,1,N)')
 
     #I know the next test is unnecessary, but I wanted to show how to test if it turns when there is an obstacle
     @patch.object(GPIO, 'input')
     @patch.object(CleaningRobot, 'activate_rotation_motor')
-    def test_execute_command_turn_left_with_obstacle(self, mock_activate_rotation_motor, mock_gpio_input):
+    @patch.object(IBS, 'get_charge_left')
+    def test_execute_command_turn_left_with_obstacle(self, mock_get_charge_left, mock_activate_rotation_motor,mock_gpio_input):
         robot = CleaningRobot()
         robot.initialize_robot()
+
+        mock_get_charge_left.return_value = 100
         mock_gpio_input.return_value = True
 
         result = robot.execute_command('l')
 
         mock_activate_rotation_motor.assert_called_once_with('l')
-        self.assertEqual(result, '(0,0,W)')  # Robot should turn left
+        self.assertEqual(result, '(0,0,W)')
 
     @patch.object(IBS, 'get_charge_left')
     @patch.object(CleaningRobot, 'activate_wheel_motor')
     @patch.object(CleaningRobot, 'activate_rotation_motor')
-    def test_execute_command_with_low_battery(self, mock_activate_rotation_motor, mock_activate_wheel_motor,
-                                              mock_get_charge_left):
+    def test_execute_command_with_low_battery(self, mock_activate_rotation_motor, mock_activate_wheel_motor, mock_get_charge_left):
         robot = CleaningRobot()
         robot.initialize_robot()
 
-        mock_get_charge_left.return_value = 10
+        mock_get_charge_left.return_value = 10 # Low battery
 
         result = robot.execute_command('f')
 
-        mock_activate_wheel_motor.assert_not_called()
-        mock_activate_rotation_motor.assert_not_called()
+        mock_activate_wheel_motor.assert_not_called() # Wheel motor should not be activated
+        mock_activate_rotation_motor.assert_not_called() # Rotation motor should not be activated
 
         self.assertEqual(result, '!(1,1,N)')
 
     @patch.object(IBS, 'get_charge_left')
     @patch.object(CleaningRobot, 'activate_wheel_motor')
     @patch.object(CleaningRobot, 'activate_rotation_motor')
-    def test_execute_command_with_sufficient_battery(self, mock_activate_rotation_motor, mock_activate_wheel_motor,
-                                                     mock_get_charge_left):
+    def test_execute_command_with_sufficient_battery(self, mock_activate_rotation_motor, mock_activate_wheel_motor, mock_get_charge_left):
         robot = CleaningRobot()
         robot.initialize_robot()
 
-        mock_get_charge_left.return_value = 20
+        mock_get_charge_left.return_value = 20 # Sufficient battery
 
         result = robot.execute_command('f')
 
-        mock_activate_wheel_motor.assert_called_once()
-        mock_activate_rotation_motor.assert_not_called()
+        mock_activate_wheel_motor.assert_called_once() # Wheel motor should be activated
+        mock_activate_rotation_motor.assert_not_called() # Rotation motor should not be activated
         self.assertEqual(result, '(0,1,N)')
+
+
 
 
 
