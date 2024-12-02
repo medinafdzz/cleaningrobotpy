@@ -110,6 +110,17 @@ class CleaningRobot:
                 self.heading = self.N
             elif self.heading == self.W:
                 self.heading = self.S
+        elif command == 'TURNAROUND':
+            self.activate_rotation_motor(self.RIGHT)
+            self.activate_rotation_motor(self.RIGHT)
+            if self.heading == self.N:
+                self.heading = self.S
+            elif self.heading == self.S:
+                self.heading = self.N
+            elif self.heading == self.E:
+                self.heading = self.W
+            elif self.heading == self.W:
+                self.heading = self.E
         return self.robot_status()
 
     def obstacle_found(self) -> bool:
