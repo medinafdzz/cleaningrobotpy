@@ -177,6 +177,23 @@ class TestCleaningRobot(TestCase):
         mock_activate_rotation_motor.assert_not_called() # Rotation motor should not be activated
         self.assertEqual(result, '(0,1,N)')
 
+    @patch.object(IBS, 'get_charge_left')
+    @patch.object(CleaningRobot, 'activate_rotation_motor')
+    def test_execute_command_turnaround(self, mock_activate_rotation_motor, mock_get_charge_left):
+        robot = CleaningRobot()
+        robot.initialize_robot()
+
+        mock_get_charge_left.return_value = 100
+
+        result = robot.execute_command('TURNAROUND')
+
+        # Verify that the rotation motor was activated twice
+        self.assertEqual(mock_activate_rotation_motor.call_count, 2)
+        mock_activate_rotation_motor.assert_has_calls([call('r'), call('r')])
+
+        # Verify that the robot is facing the opposite direction
+        self.assertEqual(result, '(0,0,S)')
+
 
 
 
