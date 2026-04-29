@@ -1,7 +1,7 @@
-# CleaningRobotPy 🚀🤖
+# CleaningRobotPy
 _CleaningRobotPy_ is an autonomous cleaning robot that moves in a room, detects obstacles, and cleans dust from the floor using a built-in cleaning system. It is equipped with sensors and motors that allow it to navigate and operate efficiently.
 
-## 📌 Features
+## Features
 
 - Autonomous movement with two DC motors (wheels & rotation)
 - Infrared sensor for obstacle detection
@@ -11,7 +11,7 @@ _CleaningRobotPy_ is an autonomous cleaning robot that moves in a room, detects 
 - Controlled by a Route Management System (RMS) that tracks room layout and obstacles
 - GPIO communication for seamless integration with hardware
 
-## 🛠️ How It Works
+## How It Works
 
 1. When powered on, the robot activates its cleaning system and starts moving.
 
@@ -25,23 +25,23 @@ _CleaningRobotPy_ is an autonomous cleaning robot that moves in a room, detects 
 
 6. The room is represented as a rectangular grid where the RMS keeps track of obstacles and the robot's position.
 
-## ⚙️ Components & Sensors
+## Components & Sensors
 
-- 🔧 DC Motor (wheels) – Moves the robot forward
+- DC Motor (wheels) – Moves the robot forward
 
-- 🔄 DC Motor (rotation) – Rotates the robot left or right
+- DC Motor (rotation) – Rotates the robot left or right
 
-- 🧭 Route Management System (RMS) – Sends movement commands
+- Route Management System (RMS) – Sends movement commands
 
-- 📡 Infrared Sensor – Detects obstacles
+- Infrared Sensor – Detects obstacles
 
-- 🔋 Intelligent Battery Sensor (IBS) – Checks remaining charge
+- Intelligent Battery Sensor (IBS) – Checks remaining charge
 
-- 🔴 Recharge LED – Signals low battery
+- Recharge LED – Signals low battery
 
-- 🧹 Cleaning System – Two rotating brushes
+- Cleaning System – Two rotating brushes
 
-## 🚀 Installation & Usage
+## Installation & Usage
 
 1. Clone the repository:
 ```
@@ -58,8 +58,7 @@ python cleaning_robot.py
 ```
 
 
-## 📜 License
+## License
 
 This project is licensed under the MIT License.
 
-🚀 Developed for both real-world and simulation environments.
